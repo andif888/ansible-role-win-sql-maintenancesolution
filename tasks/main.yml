@@ -1,0 +1,39 @@
+---
+# tasks file for ansible-role-win-sql-maintenancesolution
+
+- name: Ensure install path
+  ansible.windows.win_file:
+    path: '{{ sql_maintenance_install_path }}'
+    state: directory
+
+- name: Download scripts
+  ansible.windows.win_get_url:
+    url: '{{ item.url }}'
+    dest: '{{ item.dest }}'
+  loop:
+    - url: '{{ sql_maintenance_download_url_versioncheck_sql }}'
+      dest: '{{ sql_maintenance_file_path_versioncheck_sql }}'
+    - url: '{{ sql_maintenance_download_url_maintenancesolution_sql }}'
+      dest: '{{ sql_maintenance_file_path_maintenancesolution_sql }}'
+    - url: '{{ sql_maintenance_download_url_uninstall_sql }}'
+      dest: '{{ sql_maintenance_file_path_uninstall_sql }}'
+
+- name: MaintenanceSolution.sql disable jobs
+  community.windows.win_lineinfile:
+    line: "DECLARE @CreateJobs nvarchar(max)          = 'N'"
+    regex: '^DECLARE @CreateJobs nvarchar\(max\).*'
+    path: '{{ sql_maintenance_file_path_maintenancesolution_sql }}'
+  when: sql_maintenance_disable_jobs
+
+- name:  Check Installed MaintenanceSolution.sql
+  ansible.windows.win_shell: |
+            sqlcmd -i "{{ sql_maintenance_file_path_versioncheck_sql }}"
+  register: installed_result
+  changed_when: false
+
+- name: Install MaintenanceSolution.sql
+  ansible.windows.win_shell:
+    sqlcmd -i "{{ sql_maintenance_file_path_maintenancesolution_sql }}"
+  register: install_result
+  when: (not (installed_result.stdout is search('DatabaseBackup'))) or
+        (not (installed_result.stdout is search('CommandExecute')))

@@ -1,0 +1,35 @@
+---
+# defaults file for ansible-role-win-sql-maintenancesolution
+
+# https://github.com/olahallengren/sql-server-maintenance-solution
+# https://ola.hallengren.com/frequently-asked-questions.html
+# https://ola.hallengren.com/scripts/misc/VersionCheck.sql
+# https://ola.hallengren.com/scripts/MaintenanceSolution.sql
+# https://ola.hallengren.com/scripts/misc/Uninstall.sql
+
+# @var sql_maintenance_script_prefix:description: download files gets prefixed with this value
+sql_maintenance_script_prefix: hallengreen_sql
+
+# @var sql_maintenance_install_path:description: Path to install sql scripts into
+sql_maintenance_install_path: '{{ ansible_env.ProgramFiles }}\{{ sql_maintenance_script_prefix }}'
+
+# @var sql_maintenance_download_url_versioncheck_sql:description: download url for VersionCheck.sql
+sql_maintenance_download_url_versioncheck_sql: "https://ola.hallengren.com/scripts/misc/VersionCheck.sql"
+
+# @var sql_maintenance_download_url_maintenancesolution_sql:description: download url of MaintenanceSolution.sql
+sql_maintenance_download_url_maintenancesolution_sql: "https://raw.githubusercontent.com/olahallengren/sql-server-maintenance-solution/master/MaintenanceSolution.sql"
+
+# @var sql_maintenance_download_url_uninstall_sql:description: download url for Uninstall.sql
+sql_maintenance_download_url_uninstall_sql: "https://ola.hallengren.com/scripts/misc/Uninstall.sql"
+
+# @var sql_maintenance_file_path_versioncheck_sql: description: local path to VersionCheck.sql
+sql_maintenance_file_path_versioncheck_sql: '{{ sql_maintenance_install_path }}\{{ sql_maintenance_download_url_versioncheck_sql | basename }}'
+
+# @var sql_maintenance_file_path_maintenancesolution_sql: description: local path to aintenanceSolution.sql
+sql_maintenance_file_path_maintenancesolution_sql: '{{ sql_maintenance_install_path }}\{{ sql_maintenance_download_url_maintenancesolution_sql | basename }}'
+
+# @var sql_maintenance_file_path_uninstall_sql: description: local path to Uninstall.sql
+sql_maintenance_file_path_uninstall_sql:  '{{ sql_maintenance_install_path }}\{{ sql_maintenance_download_url_uninstall_sql | basename }}'
+
+# @var sql_maintenance_disable_jobs:description: do not create automatically jobs in sql agent
+sql_maintenance_disable_jobs: false
